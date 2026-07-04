@@ -1,0 +1,31 @@
+services:
+  mariadb:
+    build:
+      context: ./mariadb
+    container_name: mariadb
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/home/ataan/data/db
+    networks:
+      - inception
+
+  wordpress:
+    build:
+      context: ./wordpress
+    container_name: wordpress
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - wp_website_data:/home/ataan/data/wp
+    networks:
+      - inception
+
+volumes:
+  mariadb_data:
+  wp_website_data:
+
+networks:
+  inception:
