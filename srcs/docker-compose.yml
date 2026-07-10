@@ -45,8 +45,6 @@ services:
       - inception
     ports:
       - "443:443"
-     depends_on:
-      - wordpress
 
 volumes:
   mariadb_data:
