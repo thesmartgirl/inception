@@ -2,7 +2,7 @@
 FROM alpine:3.23
 
 # Install MariaDB server
-RUN apk update && apk add --no-cache mariadb mariadb-client
+RUN apk add --no-cache mariadb mariadb-client
 
 # Create directory for runtime socket
 RUN mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld
