@@ -34,8 +34,8 @@ services:
   
   nginx:
     build:
-      context: ./requirements/ngnix
-    container_name: ngnix
+      context: ./requirements/nginx
+    container_name: nginx
     restart: always
     env_file:
       - .env
@@ -45,6 +45,8 @@ services:
       - inception
     ports:
       - "443:443"
+     depends_on:
+      - wordpress
 
 volumes:
   mariadb_data:
