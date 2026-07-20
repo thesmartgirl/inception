@@ -13,6 +13,7 @@ do
 done
 
 mkdir -p /var/www/html
+chown -R nobody:nobody /var/www/html
 
 if [ ! -f /var/www/html/wp-config.php ]; then
     echo "Installing WordPress..."
@@ -29,7 +30,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     --dbpass=$MYSQL_PASSWORD \
     --dbhost=mariadb
 
-    
     wp core install \
     --allow-root \
     --url=https://$DOMAIN_NAME \
@@ -38,13 +38,28 @@ if [ ! -f /var/www/html/wp-config.php ]; then
     --admin_password=$WP_ADMIN_PASSWORD \
     --admin_email=$WP_ADMIN_EMAIL
 
-    
     wp user create \
     $WP_USER \
     $WP_USER_EMAIL \
     --user_pass=$WP_USER_PASSWORD \
     --allow-root
 
+    echo "Configuring SSL Proxy and Script definitions..."
+    
+    # Safely inject configurations using native WP-CLI commands
+    wp config set CONCATENATE_SCRIPTS false --raw --allow-root
+    wp config set FORCE_SSL_ADMIN true --raw --allow-root
+    wp config set WP_DEBUG true --raw --allow-root
+    wp config set WP_DEBUG_LOG true --raw --allow-root
+    wp config set WP_DEBUG_DISPLAY false --raw --allow-root
+
+    # Append the HTTPS proxy header fix to the end of the config file
+    echo "if (isset(\$_SERVER['HTTP_X_FORWARDED_PROTO']) && \$_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') { \$_SERVER['HTTPS'] = 'on'; }" >> wp-config.php
+
+    # Update core system directory paths to standard HTTPS
+    wp option update siteurl "https://$DOMAIN_NAME" --allow-root
+    wp option update home "https://$DOMAIN_NAME" --allow-root
 fi
 
 exec php-fpm83 -F
+
