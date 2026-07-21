@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     volumes:
-      - mariadb_data:/home/ataan/data/db
+      - mariadb_data:/var/lib/mysql
     networks:
       - inception
     secrets:
@@ -47,7 +47,6 @@ services:
     ports:
       - "443:443"
 
-
 volumes:
   mariadb_data:
   wp_website_data:
@@ -67,3 +66,4 @@ secrets:
    
   wp_user_password:
     file: ../secrets/wp_user_password.txt
+
